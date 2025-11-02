@@ -41,7 +41,7 @@ while True:
 # root site
 @app.get("/")
 def root():
-    return {"message": "Welcome to my API!!"}
+    return {"message": "Welcome to my API!!!"}
 
 # get the posts from the database
 @app.get("/posts")
@@ -67,7 +67,7 @@ def get_latest_post():
 # The id in the route is path parameter
 @app.get("/posts/{id}")
 def get_post(id: int):
-    cursor.execute("""SELECT * FROM posts WHERE id= %s """, (str(id)))
+    cursor.execute("""SELECT * FROM posts WHERE id= %s """, (str(id),))
     post = cursor.fetchone()               
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id:{id} was not found")
@@ -76,7 +76,7 @@ def get_post(id: int):
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
-    cursor.execute("""DELETE FROM posts WHERE id= %s RETURNING *""", (str(id)))
+    cursor.execute("""DELETE FROM posts WHERE id= %s RETURNING *""", (str(id),))
     deleted_post = cursor.fetchone() # saved the deleted post
     conn.commit() # commit the changes to the database
     if deleted_post == None:
@@ -87,7 +87,7 @@ def delete_post(id: int):
 
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post):
-    cursor.execute("""UPDATE posts SET title= %s, content= %s, published = %s WHERE id = %s RETURNING*""", (post.title, post.content, post.published, str(id)))
+    cursor.execute("""UPDATE posts SET title= %s, content= %s, published = %s WHERE id = %s RETURNING *""", (post.title, post.content, post.published, str(id)))
     updated_post = cursor.fetchone()
     conn.commit() # commit the changes to the database
     if updated_post == None:
